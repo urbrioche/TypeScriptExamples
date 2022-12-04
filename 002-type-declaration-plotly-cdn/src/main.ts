@@ -1,9 +1,10 @@
 import {ContourMapData} from './types/contour-map-data';
+import PlotlyJS, {Data, Layout} from './types/plotly-typings/index';
 
-declare const Plotly: any;
-
+declare const Plotly: typeof PlotlyJS;
+type ContourPlotData = Partial<Data & { contours?: { coloring: string } }>[];
 const source = getData();
-const data = [{
+const data: ContourPlotData = [{
     x: source.gridData.x,
     y: source.gridData.y,
     z: source.gridData.z,
@@ -15,7 +16,7 @@ const data = [{
     }
 }];
 
-const layout = {
+const layout: Partial<Layout> = {
     xaxis: {visible: false},
     yaxis: {visible: false},
     shapes: [{
@@ -33,7 +34,15 @@ const layout = {
         }
     }],
 };
-Plotly.newPlot(document.getElementById('contour'), data, layout);
+
+Plotly.newPlot(
+    document.getElementById('contour') as HTMLDivElement,
+    data,
+    layout
+).then(() => {
+}, error => {
+    console.error(error);
+});
 
 function getData(): ContourMapData {
     return {
